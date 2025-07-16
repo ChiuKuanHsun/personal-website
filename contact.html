@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>聯絡資訊 - KUAN HSUN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --night-bg: #1a1a1a;
+            --night-terminal-bg: #212121;
+            --night-text: #dcdcdc;
+            --night-accent: #39ff14;
+            --night-secondary: #87ceeb;
+            --night-border: rgba(57, 255, 20, 0.2);
+            --projection-glow: 0 0 15px rgba(57, 255, 20, 0.5);
+
+            --day-bg: #f0f0f0;
+            --day-terminal-bg: #ffffff;
+            --day-text: #333333;
+            --day-accent: #2c7e0c;
+            --day-secondary: #0077b6;
+            --day-border: rgba(0, 0, 0, 0.1);
+            --day-projection-glow: 0 0 15px rgba(44, 126, 12, 0.4);
+
+            --font-family: 'Fira Code', monospace;
+            --transition-speed: 0.3s;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        html {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            height: 100%;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            font-family: var(--font-family);
+            background-color: var(--night-bg);
+            color: var(--night-text);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+
+            display: flex;
+            flex-direction: column;
+        }
+        body.light-mode {
+            background-color: var(--day-bg);
+            color: var(--day-text);
+        }
+        
+        .particle {
+            position: absolute; pointer-events: none;
+            color: var(--night-accent); font-size: 20px; font-weight: 600;
+            opacity: 1; animation: particle-anim 1s forwards;
+            z-index: 9999;
+        }
+        body.light-mode .particle { color: var(--day-accent); }
+        @keyframes particle-anim { to { transform: translateY(-100px) scale(0.5); opacity: 0; } }
+        
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 40px; background-color: var(--night-terminal-bg);
+            border-bottom: 1px solid var(--night-border); z-index: 100;
+        }
+        body.light-mode .navbar { background-color: var(--day-terminal-bg); border-bottom-color: var(--day-border); }
+        .navbar .logo a { font-size: 24px; font-weight: 600; color: var(--night-accent); text-decoration: none; }
+        body.light-mode .navbar .logo a { color: var(--day-accent); }
+        .navbar .menu { display: flex; align-items: center; gap: 25px; }
+        .navbar .menu-links a { font-size: 16px; color: var(--night-text); margin: 0 10px; text-decoration: none; }
+        body.light-mode .navbar .menu-links a { color: var(--day-text); }
+        .navbar .menu a:hover { color: var(--night-accent); }
+        body.light-mode .navbar .menu a:hover { color: var(--day-accent); }
+        .switch-btn { cursor: pointer; padding: 5px 10px; border: 1px solid var(--night-border); border-radius: 5px; background: none; color: var(--night-text); }
+        body.light-mode .switch-btn { border-color: var(--day-border); color: var(--day-text); }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 50px 20px;
+            opacity: 0; transform: translateY(20px);
+            animation: content-fade-in 0.8s forwards 0.2s;
+        }
+        @keyframes content-fade-in { to { opacity: 1; transform: translateY(0); } }
+
+        .terminal-container {
+            width: 100%; max-width: 800px; margin: 0 auto;
+            border: 1px solid var(--night-border); border-radius: 8px;
+            background-color: var(--night-terminal-bg);
+            transition: background-color var(--transition-speed), border-color var(--transition-speed);
+        }
+        body.light-mode .terminal-container { background-color: var(--day-terminal-bg); border-color: var(--day-border); }
+        .terminal-header { background-color: #2c2c2c; padding: 5px 10px 0 10px; border-bottom: 1px solid #444; }
+        body.light-mode .terminal-header { background-color: #e9e9e9; border-bottom-color: #ccc; }
+        .terminal-tab {
+            display: inline-block; background-color: var(--night-terminal-bg);
+            padding: 8px 15px; border-radius: 5px 5px 0 0;
+            border: 1px solid var(--night-border); border-bottom: none;
+            font-size: 14px; position: relative; bottom: -1px;
+            transition: background-color var(--transition-speed), border-color var(--transition-speed);
+        }
+        body.light-mode .terminal-tab { background-color: var(--day-terminal-bg); border-color: var(--day-border); }
+        .terminal-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            margin-right: 8px;
+            background-color: transparent;
+            background-image: url('image/terminal_icon.png');
+
+            background-size: 35px;
+
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .terminal-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid var(--night-border);
+            border-radius: 8px;
+            background-color: var(--night-terminal-bg);
+            transition: background-color var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
+
+            box-shadow: var(--projection-glow);
+        }
+        body.light-mode .terminal-container {
+            background-color: var(--day-terminal-bg);
+            border-color: var(--day-border);
+            box-shadow: var(--day-projection-glow);
+        }
+        .terminal-body { padding: 25px; }
+        .terminal-line { margin-bottom: 1.5em; }
+        .terminal-prompt { color: var(--night-accent); margin-right: 10px; }
+        body.light-mode .terminal-prompt { color: var(--day-accent); }
+        .command { color: #fff; }
+        body.light-mode .command { color: #000; }
+        
+        /*聯絡資訊列表樣式*/
+        .contact-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            border: 1px dashed transparent;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            transition: border-color var(--transition-speed), background-color var(--transition-speed);
+        }
+        .contact-item:hover {
+            border-color: var(--night-border);
+            background-color: rgba(57, 255, 20, 0.05);
+        }
+        .contact-icon {
+            font-size: 20px;
+            color: var(--night-secondary);
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        body.light-mode .contact-icon { color: var(--day-secondary); }
+        .contact-info {
+            flex-grow: 1;
+        }
+        .contact-info .label {
+            display: block;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--night-text);
+        }
+        body.light-mode .contact-info .label { color: var(--day-text); }
+        .contact-info .value {
+            font-size: 16px;
+            color: #aaa;
+            word-break: break-all;
+        }
+        body.light-mode .contact-info .value { color: #666; }
+        .contact-action a {
+            display: inline-block;
+            padding: 8px 18px;
+            background-color: transparent;
+            border: 1px solid var(--night-accent);
+            color: var(--night-accent);
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+        body.light-mode .contact-action a {
+            border-color: var(--day-accent);
+            color: var(--day-accent);
+        }
+        .contact-action a:hover {
+            background-color: var(--night-accent);
+            color: var(--night-bg);
+        }
+        body.light-mode .contact-action a:hover {
+            background-color: var(--day-accent);
+            color: #fff;
+        }
+        
+        /*頁面切換動畫*/
+        .page-transition-command {
+            position: fixed; pointer-events: none; color: var(--night-accent);
+            font-size: 18px; font-weight: 600; white-space: nowrap;
+            transform: translate(-50%, -50%); z-index: 9999;
+            animation: command-fly-out 0.8s forwards ease-out;
+        }
+        @keyframes command-fly-out { to { opacity: 0; transform: translate(-50%, -150%) scale(0.6); } }
+        .page-transition-terminal {
+            position: fixed;
+            top: 70px;
+            right: 40px;
+
+
+            background-color: #1a1a1a;
+            border: 1px solid var(--night-border);
+            padding: 10px 20px;
+            font-size: 18px;
+            z-index: 9999;
+            border-radius: 6px;
+
+            animation: command-appear-down 0.5s forwards ease-out;
+        }
+
+        body.light-mode .page-transition-terminal {
+            background-color: #e9e9e9;
+            border-top-color: var(--day-border);
+        }
+
+        .page-transition-terminal .prompt {
+            color: var(--night-accent);
+            margin-right: 10px;
+        }
+
+        body.light-mode .page-transition-terminal .prompt {
+            color: var(--day-accent);
+        }
+
+        .page-transition-terminal .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.1em;
+            background-color: var(--night-accent);
+            vertical-align: middle;
+            animation: typing-cursor-blink 1s step-end infinite;
+        }
+
+        body.light-mode .page-transition-terminal .cursor {
+            background-color: var(--day-accent);
+        }
+
+        @keyframes command-appear-down {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typing-cursor-blink {
+            50% { opacity: 0; }
+        }
+        .site-footer {
+            text-align: center;
+            padding: 10px 0;
+            margin: 0 40px 10px 40px; 
+            border-top: 1px solid var(--night-border);
+            font-size: 14px;
+            color: #888;
+            transition: border-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .site-footer a {
+            color: var(--night-secondary);
+            text-decoration: none;
+            border-bottom: 1px dashed transparent;
+            transition: border-color var(--transition-speed);
+        }
+
+        .site-footer a:hover {
+            border-bottom-color: var(--night-secondary);
+        }
+
+        body.light-mode .site-footer {
+            border-top-color: var(--day-border);
+            color: #666;
+        }
+
+        body.light-mode .site-footer a {
+            color: var(--day-secondary);
+        }
+    </style>
+</head>
+<body id="contact-page">
+
+    <header class="navbar">
+        <div class="logo"><a href="index.html">KUAN HSUN</a></div>
+        <div class="menu">
+            <nav class="menu-links">
+                <a href="portfolio.html" data-key="nav_portfolio">作品集</a>
+                <a href="experience.html" data-key="nav_experience">經歷</a>
+                <a href="support.html" data-key="nav_support">支持我</a>
+                <a href="contact.html" data-key="nav_contact">聯絡資訊</a>
+            </nav>
+            <div class="menu-actions">
+                <button class="switch-btn" id="lang-toggle" data-key="lang_toggle">ENG</button>
+                <button class="switch-btn" id="theme-toggle" data-key="theme_toggle">日間</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="terminal-container">
+            <div class="terminal-header">
+                <div class="terminal-tab">
+                    <span class="terminal-icon"></span>
+                    <span data-key="tab_title">聯絡資訊 (Contact)</span>
+                </div>
+            </div>
+            <div class="terminal-body">
+                <div class="terminal-line">
+                    <span class="terminal-prompt">user@contact:~$</span><span class="command" data-key="contact_command">./list_contact_methods</span>
+                </div>
+                
+                <ul class="contact-list">
+                    <li class="contact-item">
+                        <div class="contact-icon">[IG]</div>
+                        <div class="contact-info">
+                            <span class="label" data-key="instagram_label">Instagram</span>
+                            <span class="value">@chiukuanhsun</span>
+                        </div>
+                        <div class="contact-action">
+                             <a href="https://www.instagram.com/chiukuanhsun/" target="_blank" data-key="action_view">前往</a>
+                        </div>
+                    </li>
+                    <li class="contact-item">
+                        <div class="contact-icon">[MAIL]</div>
+                        <div class="contact-info" style="user-select: text;">
+                            <span class="label" data-key="gmail_label">Gmail</span>
+                             <span class="value">kuanhsunextension@gmail.com</span>
+                        </div>
+                        <div class="contact-action">
+                            <a href="mailto:kuanhsunextension@gmail.com" data-key="action_send">傳送</a>
+                        </div>
+                    </li>
+
+                    </ul>
+            </div>
+        </div>
+    </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        //粒子效果
+        document.addEventListener('click', (e) => {
+            const particleCount = 5 + Math.floor(Math.random() * 5);
+            for (let i = 0; i < particleCount; i++) {
+                setTimeout(() => { createParticle(e.clientX, e.clientY); }, i * 50);
+            }
+        });
+        function createParticle(x, y) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.textContent = `${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9][Math.floor(Math.random()*3)]}`;
+            p.style.left = `${x + (Math.random()-0.5)*50}px`;
+            p.style.top = `${y}px`;
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 1000);
+        }
+
+        //頁面切換動畫
+        document.querySelectorAll('.navbar .menu-links a').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const destinationUrl = this.getAttribute('href');
+                if (!destinationUrl || destinationUrl === '#' || destinationUrl === window.location.pathname) return;
+
+                if (document.querySelector('.page-transition-terminal')) return;
+
+                const terminalBar = document.createElement('div');
+                terminalBar.className = 'page-transition-terminal';
+                
+                const promptSpan = document.createElement('span');
+                promptSpan.className = 'prompt';
+                promptSpan.textContent = '>';
+
+                const commandSpan = document.createElement('span');
+                const cursorSpan = document.createElement('span');
+                cursorSpan.className = 'cursor';
+
+                terminalBar.appendChild(promptSpan);
+                terminalBar.appendChild(commandSpan);
+                terminalBar.appendChild(cursorSpan);
+                document.body.appendChild(terminalBar);
+
+                const command = `cd ./${destinationUrl.split('.')[0]}`;
+                let charIndex = 0;
+
+                function typeCommand() {
+                    if (charIndex < command.length) {
+                        commandSpan.textContent += command.charAt(charIndex);
+                        charIndex++;
+                        setTimeout(typeCommand, 60); // 打字速度
+                    } else {
+                        // 打字完成後，等待一下再跳轉
+                        setTimeout(() => {
+                            window.location.href = destinationUrl;
+                        }, 200); // 跳轉延遲
+                    }
+                }
+
+                setTimeout(typeCommand, 400); // 等待滑入動畫完成
+            });
+        });
+
+        //語言與主題切換
+        const translations = {
+            'zh-TW': {
+                nav_portfolio: '作品集', nav_experience: '經歷', nav_support: '支持我', nav_contact: '聯絡資訊',
+                lang_toggle: 'ENG', theme_toggle_day: '日間', theme_toggle_night: '夜間',
+                tab_title: '聯絡資訊',
+                contact_command: './list_contact_methods',
+                instagram_label: 'Instagram',
+                gmail_label: 'Gmail',
+                action_view: '前往',
+                action_send: '傳送',
+                footer_home: '返回首頁',
+                footer_copyright: ' | © 2025 KUAN HSUN - 版權所有'
+            },
+            'en': {
+                nav_portfolio: 'Portfolio', nav_experience: 'Experience', nav_support: 'Support Me', nav_contact: 'Contact',
+                lang_toggle: '中文', theme_toggle_day: 'Light', theme_toggle_night: 'Dark',
+                tab_title: 'Contact',
+                contact_command: './list_contact_methods',
+                instagram_label: 'Instagram',
+                gmail_label: 'Gmail',
+                action_view: 'View',
+                action_send: 'Send',
+                footer_home: 'Back to Home',
+                footer_copyright: ' | © 2025 KUAN HSUN - All Rights Reserved'
+            }
+        };
+
+        let currentLang = localStorage.getItem('lang') || 'zh-TW';
+
+        function updateUIText(lang) {
+            document.querySelectorAll('[data-key]').forEach(elem => {
+                const key = elem.dataset.key;
+                if (key === 'theme_toggle') {
+                    elem.textContent = document.body.classList.contains('light-mode') ? translations[lang].theme_toggle_night : translations[lang].theme_toggle_day;
+                } else if (translations[lang][key]) {
+                    elem.textContent = translations[lang][key];
+                }
+            });
+        }
+        
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            updateUIText(lang);
+        }
+
+        function applyTheme(theme) {
+            document.body.classList.toggle('light-mode', theme === 'light');
+            localStorage.setItem('theme', theme);
+            updateUIText(currentLang);
+        }
+        
+        const langToggleButton = document.getElementById('lang-toggle');
+        const themeToggleButton = document.getElementById('theme-toggle');
+        langToggleButton.addEventListener('click', () => setLanguage(currentLang === 'zh-TW' ? 'en' : 'zh-TW'));
+        themeToggleButton.addEventListener('click', () => applyTheme(document.body.classList.contains('light-mode') ? 'dark' : 'light'));
+
+        // 初始化
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        applyTheme(savedTheme);
+        setLanguage(currentLang);
+    });
+    </script>
+    <footer class="site-footer">
+        <a href="index.html" data-key="footer_home">返回首頁</a>
+        <span data-key="footer_copyright"> | © 2025 KUAN HSUN - All Rights Reserved</span>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>我的經歷 - KUAN HSUN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --night-bg: #1a1a1a;
+            --night-terminal-bg: #212121;
+            --night-text: #dcdcdc;
+            --night-accent: #39ff14;
+            --night-secondary: #87ceeb;
+            --night-border: rgba(57, 255, 20, 0.2);
+            --projection-glow: 0 0 15px rgba(57, 255, 20, 0.5);
+
+            --day-bg: #f0f0f0;
+            --day-terminal-bg: #ffffff;
+            --day-text: #333333;
+            --day-accent: #2c7e0c;
+            --day-secondary: #0077b6;
+            --day-border: rgba(0, 0, 0, 0.1);
+            --day-projection-glow: 0 0 15px rgba(44, 126, 12, 0.4);
+
+            --font-family: 'Fira Code', monospace;
+            --transition-speed: 0.3s;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            --tree-line-color: rgba(57, 255, 20, 0.85);
+            --night-folder-name-color: #add8e6;
+            --day-folder-name-color: #0077b6;
+        }
+        html {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            height: 100%;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            font-family: var(--font-family);
+            background-color: var(--night-bg);
+            color: var(--night-text);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+
+            display: flex;
+            flex-direction: column;
+        }
+        body.light-mode {
+            background-color: var(--day-bg);
+            color: var(--day-text);
+        }
+        
+        .particle {
+            position: absolute; pointer-events: none;
+            color: var(--night-accent); font-size: 20px; font-weight: 600;
+            opacity: 1; animation: particle-anim 1s forwards;
+            z-index: 9999;
+        }
+        body.light-mode .particle { color: var(--day-accent); }
+        @keyframes particle-anim { to { transform: translateY(-100px) scale(0.5); opacity: 0; } }
+        
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 40px; background-color: var(--night-terminal-bg);
+            border-bottom: 1px solid var(--night-border); z-index: 100;
+        }
+        body.light-mode .navbar { background-color: var(--day-terminal-bg); border-bottom-color: var(--day-border); }
+        .navbar .logo a { font-size: 24px; font-weight: 600; color: var(--night-accent); text-decoration: none; }
+        body.light-mode .navbar .logo a { color: var(--day-accent); }
+        .navbar .menu { display: flex; align-items: center; gap: 25px; }
+        .navbar .menu-links a { font-size: 16px; color: var(--night-text); margin: 0 10px; text-decoration: none; }
+        body.light-mode .navbar .menu-links a { color: var(--day-text); }
+        .navbar .menu a:hover { color: var(--night-accent); }
+        body.light-mode .navbar .menu a:hover { color: var(--day-accent); }
+        .switch-btn { cursor: pointer; padding: 5px 10px; border: 1px solid var(--night-border); border-radius: 5px; background: none; color: var(--night-text); }
+        body.light-mode .switch-btn { border-color: var(--day-border); color: var(--day-text); }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 50px 20px;
+            opacity: 0; transform: translateY(20px);
+            animation: content-fade-in 0.8s forwards 0.2s;
+        }
+        @keyframes content-fade-in { to { opacity: 1; transform: translateY(0); } }
+
+        .terminal-container {
+            width: 100%; max-width: 800px; margin: 0 auto;
+            border: 1px solid var(--night-border); border-radius: 8px;
+            background-color: var(--night-terminal-bg);
+        }
+        .terminal-container {
+            width: 100%; max-width: 800px; margin: 0 auto;
+            border: 1px solid var(--night-border); border-radius: 8px;
+            background-color: var(--night-terminal-bg);
+            transition: background-color var(--transition-speed), border-color var(--transition-speed);
+        }
+        body.light-mode .terminal-container { background-color: var(--day-terminal-bg); border-color: var(--day-border); }
+        .terminal-header { background-color: #2c2c2c; padding: 5px 10px 0 10px; border-bottom: 1px solid #444; }
+        body.light-mode .terminal-header { background-color: #e9e9e9; border-bottom-color: #ccc; }
+        .terminal-tab {
+            display: inline-block; background-color: var(--night-terminal-bg);
+            padding: 8px 15px; border-radius: 5px 5px 0 0;
+            border: 1px solid var(--night-border); border-bottom: none;
+            font-size: 14px; position: relative; bottom: -1px;
+            transition: background-color var(--transition-speed), border-color var(--transition-speed);
+        }
+        body.light-mode .terminal-tab { background-color: var(--day-terminal-bg); border-color: var(--day-border); }
+        .terminal-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            margin-right: 8px;
+            background-color: transparent;
+            background-image: url('image/terminal_icon.png');
+
+            background-size: 35px;
+
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .terminal-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid var(--night-border);
+            border-radius: 8px;
+            background-color: var(--night-terminal-bg);
+            transition: background-color var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
+
+            box-shadow: var(--projection-glow);
+        }
+        body.light-mode .terminal-container {
+            background-color: var(--day-terminal-bg);
+            border-color: var(--day-border);
+            box-shadow: var(--day-projection-glow);
+        }
+        .terminal-body { padding: 25px; }
+        .terminal-line { margin-bottom: 1.5em; }
+        .terminal-prompt { color: var(--night-accent); margin-right: 10px; }
+        .command { color: #fff; }
+        body.light-mode .command { color: #000; }
+        
+        /*目錄樹樣式*/
+        .directory-tree {
+            margin-top: 1.5em;
+            font-size: 16px;
+        }
+        .directory-tree, .directory-tree ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+        .directory-tree ul {
+            padding-left: 32px;
+        }
+
+        .directory-tree li {
+            position: relative;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        /* 繪製連接線 */
+        .directory-tree li::before, .directory-tree li::after {
+            content: '';
+            position: absolute;
+            left: -20px;
+            border-color: var(--tree-line-color);
+            transition: border-color var(--transition-speed);
+        }
+
+        /* 垂直線 */
+        .directory-tree li::before {
+            border-left: 1px dashed var(--tree-line-color);
+            height: 100%;
+            top: 0;
+        }
+
+        /* 水平線 */
+        .directory-tree li::after {
+            border-top: 1px dashed var(--tree-line-color);
+            width: 15px;
+            top: 17px; 
+        }
+
+        /* 處理最後一個項目的線條，讓它變成 "└" */
+        .directory-tree li:last-child::before {
+            height: 17px;
+        }
+
+        .tree-folder {
+            color: var(--night-folder-name-color); 
+            font-weight: 600;
+            transition: color var(--transition-speed);
+        }
+        body.light-mode .tree-folder{
+            color: var(--day-folder-name-color);
+        }
+
+        .experience-details {
+            margin-top: 8px;
+            padding-left: 12px; 
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        body.light-mode .experience-details { color: #666; }
+        .experience-details p {
+            margin: 0;
+            padding: 2px 0;
+        }
+        
+        .site-footer {
+            text-align: center;
+            padding: 10px 0;
+            margin: 0 40px 10px 40px; 
+            border-top: 1px solid var(--night-border);
+            font-size: 14px;
+            color: #888;
+            transition: border-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .site-footer a {
+            color: var(--night-secondary);
+            text-decoration: none;
+            border-bottom: 1px dashed transparent;
+            transition: border-color var(--transition-speed);
+        }
+
+        .site-footer a:hover {
+            border-bottom-color: var(--night-secondary);
+        }
+
+        body.light-mode .site-footer {
+            border-top-color: var(--day-border);
+            color: #666;
+        }
+
+        body.light-mode .site-footer a {
+            color: var(--day-secondary);
+        }
+        /*頁面切換動畫*/
+        .page-transition-command {
+            position: fixed; pointer-events: none; color: var(--night-accent);
+            font-size: 18px; font-weight: 600; white-space: nowrap;
+            transform: translate(-50%, -50%); z-index: 9999;
+            animation: command-fly-out 0.8s forwards ease-out;
+        }
+        @keyframes command-fly-out { to { opacity: 0; transform: translate(-50%, -150%) scale(0.6); } }
+        .page-transition-terminal {
+            position: fixed;
+            top: 70px;
+            right: 40px;
+
+            background-color: #1a1a1a;
+            border: 1px solid var(--night-border);
+            padding: 10px 20px;
+            font-size: 18px;
+            z-index: 9999;
+            border-radius: 6px;
+
+            animation: command-appear-down 0.5s forwards ease-out;
+        }
+
+        body.light-mode .page-transition-terminal {
+            background-color: #e9e9e9;
+            border-top-color: var(--day-border);
+        }
+
+        .page-transition-terminal .prompt {
+            color: var(--night-accent);
+            margin-right: 10px;
+        }
+
+        body.light-mode .page-transition-terminal .prompt {
+            color: var(--day-accent);
+        }
+
+        .page-transition-terminal .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.1em;
+            background-color: var(--night-accent);
+            vertical-align: middle;
+            animation: typing-cursor-blink 1s step-end infinite;
+        }
+
+        body.light-mode .page-transition-terminal .cursor {
+            background-color: var(--day-accent);
+        }
+
+        @keyframes command-appear-down {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typing-cursor-blink {
+            50% { opacity: 0; }
+        }
+
+    </style>
+</head>
+<body id="experience-page">
+
+    <header class="navbar">
+        <div class="logo"><a href="index.html">KUAN HSUN</a></div>
+        <div class="menu">
+            <nav class="menu-links">
+                <a href="portfolio.html" data-key="nav_portfolio">作品集</a>
+                <a href="experience.html" data-key="nav_experience">經歷</a>
+                <a href="support.html" data-key="nav_support">支持我</a>
+                <a href="contact.html" data-key="nav_contact">聯絡資訊</a>
+            </nav>
+            <div class="menu-actions">
+                <button class="switch-btn" id="lang-toggle" data-key="lang_toggle">ENG</button>
+                <button class="switch-btn" id="theme-toggle" data-key="theme_toggle">日間</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="terminal-container">
+            <div class="terminal-header">
+                <div class="terminal-tab">
+                    <span class="terminal-icon"></span>
+                    <span data-key="tab_title">我的經歷 (Experience)</span>
+                </div>
+            </div>
+            <div class="terminal-body">
+                <div class="terminal-line">
+                    <span class="terminal-prompt">user@experience:~$</span><span class="command" data-key="experience_command">tree /F</span>
+                </div>
+                
+                <ul class="directory-tree">
+                    <li>
+                        <span class="tree-folder" data-key="folder_education">Education/</span>
+                        <ul>
+                            <li>
+                                <span class="tree-file" data-key="education_1_file">2025-Now_University_Name.json</span>
+                                <div class="experience-details">
+                                    <p data-key="education_1_major">- 主修：計算機科學與工程</p>
+                                    <p data-key="education_1_desc">- 榮譽：書卷獎 (2023)</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <span class="tree-folder" data-key="folder_work">Work_Experience/</span>
+                        <ul>
+                            <li>
+                                <span class="tree-file" data-key="work_1_file">2024_Company_A_Intern.log</span>
+                                <div class="experience-details">
+                                    <p data-key="work_1_role">- 職位：前端開發實習生</p>
+                                    <p data-key="work_1_desc">- 內容：使用 React 開發與維護...</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <a href="index.html" data-key="footer_home">返回首頁</a>
+        <span data-key="footer_copyright"> | © 2025 KUAN HSUN - All Rights Reserved</span>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('click', (e) => {
+            //if (e.target.closest('a') || e.target.closest('button')) return;
+
+            //計算頁面的滾動距離
+            const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+            //計算出點擊在整個文件上的絕對座標
+            const clickX = e.clientX + scrollX;
+            const clickY = e.clientY + scrollY;
+
+            //生成粒子
+            const particleCount = 5 + Math.floor(Math.random() * 5);
+            for (let i = 0; i < particleCount; i++) {
+                setTimeout(() => {
+                    createParticle(clickX, clickY); //使用修正後的座標
+                }, i * 50);
+            }
+        });
+        function createParticle(x, y) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.textContent = `${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9][Math.floor(Math.random()*3)]}`;
+            p.style.left = `${x + (Math.random()-0.5)*50}px`;
+            p.style.top = `${y}px`;
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 1000);
+        }
+
+        //頁面切換動畫
+        document.querySelectorAll('.navbar .menu-links a').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const destinationUrl = this.getAttribute('href');
+                if (!destinationUrl || destinationUrl === '#' || destinationUrl === window.location.pathname) return;
+
+                if (document.querySelector('.page-transition-terminal')) return;
+
+                const terminalBar = document.createElement('div');
+                terminalBar.className = 'page-transition-terminal';
+                
+                const promptSpan = document.createElement('span');
+                promptSpan.className = 'prompt';
+                promptSpan.textContent = '>';
+
+                const commandSpan = document.createElement('span');
+                const cursorSpan = document.createElement('span');
+                cursorSpan.className = 'cursor';
+
+                terminalBar.appendChild(promptSpan);
+                terminalBar.appendChild(commandSpan);
+                terminalBar.appendChild(cursorSpan);
+                document.body.appendChild(terminalBar);
+
+                const command = `cd ./${destinationUrl.split('.')[0]}`;
+                let charIndex = 0;
+
+                function typeCommand() {
+                    if (charIndex < command.length) {
+                        commandSpan.textContent += command.charAt(charIndex);
+                        charIndex++;
+                        setTimeout(typeCommand, 60); // 打字速度
+                    } else {
+                        // 打字完成後，等待一下再跳轉
+                        setTimeout(() => {
+                            window.location.href = destinationUrl;
+                        }, 200); // 跳轉延遲
+                    }
+                }
+
+                setTimeout(typeCommand, 400); // 等待滑入動畫完成
+            });
+        });
+
+        //語言與主題切換
+        const translations = {
+            'zh-TW': {
+                nav_portfolio: '作品集', nav_experience: '經歷', nav_support: '支持我', nav_contact: '聯絡資訊',
+                lang_toggle: 'ENG', theme_toggle_day: '日間', theme_toggle_night: '夜間',
+                tab_title: '我的經歷',
+                experience_command: 'tree /F',
+                folder_education: '學術經歷/',
+                education_1_file: '2025-現在_國立清華大學.json',
+                education_1_major: '主修：資訊工程系',
+                education_1_desc: ' ',
+                education_1_desc_2: '- 畢業專題：...',
+                folder_work: '工作經歷/',
+                work_1_file: '空空如也',
+                work_1_role: ' ',
+                work_1_desc: ' ',
+                footer_home: '返回首頁',
+                footer_copyright: ' | © 2025 KUAN HSUN - 版權所有'
+            },
+            'en': {
+                nav_portfolio: 'Portfolio', nav_experience: 'Experience', nav_support: 'Support Me', nav_contact: 'Contact',
+                lang_toggle: '中文', theme_toggle_day: 'Light', theme_toggle_night: 'Dark',
+                tab_title: 'My Experience',
+                experience_command: 'tree /F',
+                folder_education: 'Education/',
+                education_1_file: '2025-Now_NTHU.json',
+                education_1_major: 'Major: Computer Science',
+                education_1_desc: ' ',
+                education_1_desc_2: '- Final Project: ...',
+                folder_work: 'Work_Experience/',
+                work_1_file: '404 Not Found',
+                work_1_role: ' ',
+                work_1_desc: ' ',
+                footer_home: 'Back to Home',
+                footer_copyright: ' | © 2025 KUAN HSUN - All Rights Reserved'
+            }
+        };
+        let currentLang = localStorage.getItem('lang') || 'zh-TW';
+
+        function updateUIText(lang) {
+            document.querySelectorAll('[data-key]').forEach(elem => {
+                const key = elem.dataset.key;
+                if (key === 'theme_toggle') {
+                    elem.textContent = document.body.classList.contains('light-mode') ? translations[lang].theme_toggle_night : translations[lang].theme_toggle_day;
+                } else if (translations[lang][key]) {
+                    elem.textContent = translations[lang][key];
+                }
+            });
+        }
+        
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            updateUIText(lang);
+        }
+
+        function applyTheme(theme) {
+            document.body.classList.toggle('light-mode', theme === 'light');
+            localStorage.setItem('theme', theme);
+            updateUIText(currentLang);
+        }
+        
+        const langToggleButton = document.getElementById('lang-toggle');
+        const themeToggleButton = document.getElementById('theme-toggle');
+        langToggleButton.addEventListener('click', () => setLanguage(currentLang === 'zh-TW' ? 'en' : 'zh-TW'));
+        themeToggleButton.addEventListener('click', () => applyTheme(document.body.classList.contains('light-mode') ? 'dark' : 'light'));
+
+        // 初始化
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        applyTheme(savedTheme);
+        setLanguage(currentLang);
+    });
+    </script>
+
+</body>
+</html>

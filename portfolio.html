@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>我的作品集 - KUAN HSUN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --night-bg: #1a1a1a;
+            --night-terminal-bg: #212121;
+            --night-text: #dcdcdc;
+            --night-accent: #39ff14;
+            --night-secondary: #87ceeb;
+            --night-border: rgba(57, 255, 20, 0.2);
+            --projection-glow: 0 0 15px rgba(57, 255, 20, 0.5);
+
+            --day-bg: #f0f0f0;
+            --day-terminal-bg: #ffffff;
+            --day-text: #333333;
+            --day-accent: #2c7e0c;
+            --day-secondary: #0077b6;
+            --day-border: rgba(0, 0, 0, 0.1);
+            --day-projection-glow: 0 0 15px rgba(44, 126, 12, 0.4);
+
+            --font-family: 'Fira Code', monospace;
+            --transition-speed: 0.3s;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            --tree-line-color: rgba(57, 255, 20, 0.85);
+            --night-folder-name-color: #add8e6;
+            --day-folder-name-color: #0077b6;
+        }
+        html {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        html, body {
+            margin: 0; padding: 0; width: 100%;
+            font-family: var(--font-family);
+            background-color: var(--night-bg);
+            color: var(--night-text);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+        body.light-mode {
+            background-color: var(--day-bg);
+            color: var(--day-text);
+        }
+        
+        a { text-decoration: none; }
+
+        /*粒子效果, 導覽列, 頁腳, 頁面切換動畫*/
+        .particle { position: absolute; pointer-events: none; color: var(--night-accent); font-size: 20px; font-weight: 600; opacity: 1; animation: particle-anim 1s forwards; }
+        body.light-mode .particle { color: var(--day-accent); }
+        @keyframes particle-anim { to { transform: translateY(-100px) scale(0.5); opacity: 0; } }
+        
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background-color: var(--night-terminal-bg); border-bottom: 1px solid var(--night-border); z-index: 100; }
+        body.light-mode .navbar { background-color: var(--day-terminal-bg); border-bottom-color: var(--day-border); }
+        .navbar .logo a { font-size: 24px; font-weight: 600; color: var(--night-accent); }
+        body.light-mode .navbar .logo a { color: var(--day-accent); }
+        .navbar .menu { display: flex; align-items: center; gap: 25px; }
+        .navbar .menu-links a { font-size: 16px; color: var(--night-text); margin: 0 10px; }
+        body.light-mode .navbar .menu-links a { color: var(--day-text); }
+        .navbar .menu a:hover { color: var(--night-accent); }
+        body.light-mode .navbar .menu a:hover { color: var(--day-accent); }
+        .switch-btn { cursor: pointer; padding: 5px 10px; border: 1px solid var(--night-border); border-radius: 5px; background: none; color: var(--night-text); }
+        body.light-mode .switch-btn { border-color: var(--day-border); color: var(--day-text); }
+
+        .main-content { padding: 50px 20px; opacity: 0; transform: translateY(20px); animation: content-fade-in 0.8s forwards 0.2s; }
+        @keyframes content-fade-in { to { opacity: 1; transform: translateY(0); } }
+
+
+        .terminal-container { 
+            width: 100%; max-width: 900px; margin: 0 auto; 
+            border: 1px solid var(--night-border); 
+            border-radius: 8px; 
+            background-color: var(--night-terminal-bg); 
+            transition: background-color var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
+            box-shadow: var(--projection-glow);
+        }
+        body.light-mode .terminal-container {
+            background-color: var(--day-terminal-bg);
+            border-color: var(--day-border);
+            box-shadow: var(--day-projection-glow);
+        }
+        
+        /*作品集分頁樣式*/
+        .portfolio-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            background-color: #2c2c2c;
+            padding: 5px 10px 0 10px;
+            border-bottom: 1px solid #444;
+        }
+        body.light-mode .portfolio-tabs { background-color: #e9e9e9; border-bottom-color: #ccc; }
+        
+        .tab {
+            cursor: pointer;
+            padding: 8px 15px;
+            font-size: 14px;
+            border: 1px solid transparent;
+            border-bottom: none;
+            position: relative;
+            bottom: -1px;
+            color: #aaa;
+            transition: all var(--transition-speed);
+        }
+        body.light-mode .tab { color: #666; }
+        
+        .tab.active {
+            background-color: var(--night-terminal-bg);
+            border-color: var(--night-border);
+            border-radius: 5px 5px 0 0;
+            color: var(--night-accent);
+        }
+        body.light-mode .tab.active {
+            background-color: var(--day-terminal-bg);
+            border-color: var(--day-border);
+            color: var(--day-accent);
+        }
+        .tab-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            margin-right: 8px;
+            background-color: transparent;
+            background-image: url('image/terminal_icon.png');
+            background-size: 35px;
+
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .portfolio-content {
+            padding: 30px;
+            min-height: 450px;
+        }
+        
+        .project-details {
+            display: none;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 30px;
+            align-items: flex-start;
+        }
+        .project-details.active {
+            display: grid;
+            animation: project-fade-in 0.5s;
+        }
+        @keyframes project-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+        .project-image {
+            width: 100%;
+            border: 1px solid var(--night-border);
+            padding: 10px;
+            background-color: #000;
+        }
+        .project-image img {
+            width: 100%;
+            display: block;
+        }
+
+        .project-info h3 {
+            font-size: 24px;
+            color: var(--night-secondary);
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        body.light-mode .project-info h3 { color: var(--day-secondary); }
+
+        .project-tags {
+            margin-bottom: 20px;
+        }
+        .tag {
+            display: inline-block;
+            background-color: rgba(57, 255, 20, 0.1);
+            color: var(--night-accent);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        body.light-mode .tag {
+            background-color: rgba(44, 126, 12, 0.1);
+            color: var(--day-accent);
+        }
+
+        .project-description {
+            line-height: 1.8;
+            font-size: 15px;
+            color: #ccc;
+        }
+        body.light-mode .project-description { color: #555; }
+
+        .project-links {
+            margin-top: 25px;
+        }
+        .project-links a {
+            color: var(--night-secondary);
+            margin-right: 20px;
+            border-bottom: 1px dashed var(--night-secondary);
+        }
+        .project-links a:hover {
+            background-color: var(--night-secondary);
+            color: var(--night-bg);
+        }
+
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            background-color: #2c2c2c;
+            border-top: 1px solid #444;
+        }
+        body.light-mode .pagination-controls { background-color: #e9e9e9; border-top-color: #ccc; }
+
+        .pagination-btn {
+            background: none;
+            border: 1px solid var(--night-border);
+            color: var(--night-text);
+            padding: 5px 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 0 10px;
+            border-radius: 5px;
+        }
+        body.light-mode .pagination-btn {
+            border: 1px solid rgb(151 153 151);
+            color: #525252;
+        }
+        .pagination-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .page-info {
+            font-size: 14px;
+        }
+
+        .site-footer {
+            text-align: center; padding: 20px 0; margin: 20px 40px 20px 40px;
+            border-top: 1px solid var(--night-border); font-size: 14px; color: #888;
+        }
+        .site-footer a { color: var(--night-secondary); }
+        .site-footer a:hover { border-bottom: 1px dashed var(--night-secondary); }
+        body.light-mode .site-footer { border-top-color: var(--day-border); color: #666; }
+        body.light-mode .site-footer a { color: var(--day-secondary); }
+        
+        .page-transition-terminal {
+            position: fixed; top: 70px; right: 40px;
+            background-color: #1a1a1a; border: 1px solid var(--night-border);
+            padding: 10px 20px; font-size: 18px; z-index: 9999;
+            border-radius: 6px;
+            animation: command-appear-down 0.5s forwards ease-out;
+        }
+        body.light-mode .page-transition-terminal { background-color: #e9e9e9; border-color: var(--day-border); }
+        .page-transition-terminal .prompt { color: var(--night-accent); margin-right: 10px; }
+        body.light-mode .page-transition-terminal .prompt { color: var(--day-accent); }
+        .page-transition-terminal .cursor {
+            display: inline-block; width: 10px; height: 1.1em;
+            background-color: var(--night-accent); vertical-align: middle;
+            animation: typing-cursor-blink 1s step-end infinite;
+        }
+        body.light-mode .page-transition-terminal .cursor { background-color: var(--day-accent); }
+        
+        @keyframes command-appear-down {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes typing-cursor-blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body id="portfolio-page">
+
+    <header class="navbar">
+        <div class="logo"><a href="index.html">KUAN HSUN</a></div>
+        <div class="menu">
+            <nav class="menu-links">
+                <a href="portfolio.html" data-key="nav_portfolio">作品集</a>
+                <a href="experience.html" data-key="nav_experience">經歷</a>
+                <a href="support.html" data-key="nav_support">支持我</a>
+                <a href="contact.html" data-key="nav_contact">聯絡資訊</a>
+            </nav>
+            <div class="menu-actions">
+                <button class="switch-btn" id="lang-toggle" data-key="lang_toggle">ENG</button>
+                <button class="switch-btn" id="theme-toggle" data-key="theme_toggle">日間</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="terminal-container">
+            <div class="portfolio-tabs" id="portfolio-tabs">
+                <!-- JavaScript 會在這裡生成分頁 -->
+            </div>
+            <div class="portfolio-content" id="portfolio-content">
+                <!-- JavaScript 會在這裡生成專案內容 -->
+            </div>
+            <div class="pagination-controls" id="pagination-controls">
+                <!-- JavaScript 會在這裡生成分頁按鈕 -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <a href="index.html" data-key="footer_home">返回首頁</a>
+        <span data-key="footer_copyright"> | © 2025 CHIU KUAN HSUN - All Rights Reserved</span>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        //專案資料庫
+        const portfolioData = [
+            {
+                id: 'project1',
+                image: 'https://placehold.co/600x400/000000/39ff14?text=Project+One',
+                tags: ['JavaScript', 'CSS Animation', 'HTML5'],
+                links: {
+                    demo: '#',
+                    github: '#'
+                },
+                'zh-TW': {
+                    title: '個人網站',
+                    description: '這就是您正在瀏覽的這個網站！一個完全客製化、充滿終端機風格的個人空間。從設計到程式碼，皆為獨立完成，旨在打造獨一無二的瀏覽體驗。'
+                },
+                en: {
+                    title: 'Personal Website',
+                    description: 'The very website you are browsing now! A fully custom, terminal-themed personal space. Designed and coded from scratch to create a unique browsing experience.'
+                }
+            },
+            {
+                id: 'project2',
+                image: 'https://placehold.co/600x400/000000/87ceeb?text=Project+Two',
+                tags: ['React', 'API', 'Node.js'],
+                links: {
+                    demo: '#',
+                    github: '#'
+                },
+                'zh-TW': {
+                    title: '天氣查詢應用',
+                    description: '一個使用 React 框架開發的單頁應用程式 (SPA)，能夠串接開放天氣 API，提供即時的天氣資訊查詢與未來一週預報。'
+                },
+                en: {
+                    title: 'Weather-Check App',
+                    description: 'A Single Page Application (SPA) developed with React, fetching data from OpenWeather API to provide real-time weather information and a one-week forecast.'
+                }
+            },
+            {
+                id: 'project3',
+                image: 'https://placehold.co/600x400/000000/dcdcdc?text=Project+Three',
+                tags: ['Python', 'Data Visualization'],
+                links: {
+                    github: '#'
+                },
+                'zh-TW': {
+                    title: '資料視覺化儀表板',
+                    description: '使用 Python 的 Flask 框架與 D3.js 函式庫，將複雜的數據集轉換為互動式的圖表與儀表板，幫助使用者快速洞察資料趨勢。'
+                },
+                en: {
+                    title: 'Data-Viz Dashboard',
+                    description: 'Using Python (Flask) and D3.js to transform complex datasets into interactive charts and dashboards, helping users to gain insights from data quickly.'
+                }
+            }
+        ];
+
+        //語言翻譯資料庫
+        const translations = {
+            'zh-TW': {
+                nav_portfolio: '作品集', nav_experience: '經歷', nav_support: '支持我', nav_contact: '聯絡資訊',
+                lang_toggle: 'ENG', theme_toggle_day: '日間', theme_toggle_night: '夜間',
+                footer_home: '返回首頁',
+                footer_copyright: ' | © 2025 CHIU KUAN HSUN - 版權所有'
+            },
+            'en': {
+                nav_portfolio: 'Portfolio', nav_experience: 'Experience', nav_support: 'Support Me', nav_contact: 'Contact',
+                lang_toggle: '中文', theme_toggle_day: 'Light', theme_toggle_night: 'Dark',
+                footer_home: 'Back to Home',
+                footer_copyright: ' | © 2025 CHIU KUAN HSUN - All Rights Reserved'
+            }
+        };
+
+        //頁面邏輯
+        const tabsContainer = document.getElementById('portfolio-tabs');
+        const contentContainer = document.getElementById('portfolio-content');
+        const paginationContainer = document.getElementById('pagination-controls');
+        
+        const ITEMS_PER_PAGE = 2;
+        let currentPage = 1;
+        let currentLang = localStorage.getItem('lang') || 'zh-TW';
+
+        function renderPortfolio() {
+            tabsContainer.innerHTML = '';
+            contentContainer.innerHTML = '';
+            paginationContainer.innerHTML = '';
+
+            const totalPages = Math.ceil(portfolioData.length / ITEMS_PER_PAGE);
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            const itemsToShow = portfolioData.slice(startIndex, endIndex);
+
+            itemsToShow.forEach((project, index) => {
+                const tab = document.createElement('div');
+                tab.className = 'tab';
+                tab.dataset.projectId = project.id;
+
+                const icons = [
+                    'image/powershell_icon.png',
+                    'image/powershell_icon2.png', 
+                    'image/powershell_icon3.png', 
+                    'image/powershell_icon4.png'
+                ];
+                const randomIconSrc = icons[Math.floor(Math.random() * icons.length)];
+
+                const iconImg = document.createElement('img');
+                iconImg.className = 'tab-icon';
+                iconImg.src = randomIconSrc;
+                iconImg.alt = 'Terminal Icon';
+
+                const titleSpan = document.createElement('span');
+                titleSpan.textContent = project[currentLang].title;
+                
+                tab.appendChild(iconImg);
+                tab.appendChild(titleSpan);
+                
+
+                if (index === 0) {
+                    tab.classList.add('active');
+                }
+                tabsContainer.appendChild(tab);
+            });
+
+            itemsToShow.forEach((project, index) => {
+                const details = document.createElement('div');
+                details.className = 'project-details';
+                details.id = `project-${project.id}`;
+                if (index === 0) {
+                    details.classList.add('active');
+                }
+
+                let linksHTML = '';
+                if(project.links.demo) linksHTML += `<a href="${project.links.demo}" target="_blank">Live Demo</a>`;
+                if(project.links.github) linksHTML += `<a href="${project.links.github}" target="_blank">GitHub</a>`;
+
+                details.innerHTML = `
+                    <div class="project-image">
+                        <img src="${project.image}" alt="${project[currentLang].title}">
+                    </div>
+                    <div class="project-info">
+                        <h3>${project[currentLang].title}</h3>
+                        <div class="project-tags">
+                            ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                        <p class="project-description">${project[currentLang].description}</p>
+                        <div class="project-links">${linksHTML}</div>
+                    </div>
+                `;
+                contentContainer.appendChild(details);
+            });
+
+            if (totalPages > 1) {
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'pagination-btn';
+                prevBtn.textContent = '<';
+                prevBtn.disabled = currentPage === 1;
+                prevBtn.addEventListener('click', () => {
+                    currentPage--;
+                    renderPortfolio();
+                });
+
+                const pageInfo = document.createElement('span');
+                pageInfo.className = 'page-info';
+                pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'pagination-btn';
+                nextBtn.textContent = '>';
+                nextBtn.disabled = currentPage === totalPages;
+                nextBtn.addEventListener('click', () => {
+                    currentPage++;
+                    renderPortfolio();
+                });
+
+                paginationContainer.append(prevBtn, pageInfo, nextBtn);
+            }
+            
+            addTabListeners();
+        }
+
+        function addTabListeners() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.project-details').forEach(d => d.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById(`project-${this.dataset.projectId}`).classList.add('active');
+                });
+            });
+        }
+        
+        //語言與主題切換邏輯
+        function updateUIText(lang) {
+            document.querySelectorAll('[data-key]').forEach(elem => {
+                const key = elem.dataset.key;
+                if (key === 'theme_toggle') {
+                    elem.textContent = document.body.classList.contains('light-mode') ? translations[lang].theme_toggle_night : translations[lang].theme_toggle_day;
+                } else if (translations[lang][key]) {
+                    elem.textContent = translations[lang][key];
+                }
+            });
+            renderPortfolio();
+        }
+        
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            updateUIText(lang);
+        }
+
+        function applyTheme(theme) {
+            document.body.classList.toggle('light-mode', theme === 'light');
+            localStorage.setItem('theme', theme);
+            updateUIText(currentLang);
+        }
+        
+        //粒子效果 & 頁面切換
+        document.addEventListener('click', (e) => {
+            //if (e.target.closest('a') || e.target.closest('button')) return;
+
+            //計算頁面的滾動距離
+            const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+            //計算出點擊在整個文件上的絕對座標
+            const clickX = e.clientX + scrollX;
+            const clickY = e.clientY + scrollY;
+
+            //生成粒子
+            const particleCount = 5 + Math.floor(Math.random() * 5);
+            for (let i = 0; i < particleCount; i++) {
+                setTimeout(() => {
+                    createParticle(clickX, clickY); //使用修正後的座標
+                }, i * 50);
+            }
+        });
+        function createParticle(x, y) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.textContent = `${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9][Math.floor(Math.random()*3)]}`;
+            p.style.left = `${x + (Math.random()-0.5)*50}px`;
+            p.style.top = `${y}px`;
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 1000);
+        }
+
+        document.querySelectorAll('.navbar .menu-links a').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const destinationUrl = this.getAttribute('href');
+                if (!destinationUrl || destinationUrl === '#' || destinationUrl === window.location.pathname) return;
+                if (document.querySelector('.page-transition-terminal')) return;
+
+                const terminalBar = document.createElement('div');
+                terminalBar.className = 'page-transition-terminal';
+                terminalBar.innerHTML = `<span class="prompt">></span><span class="command-text"></span><span class="cursor"></span>`;
+                document.body.appendChild(terminalBar);
+                
+                const commandText = terminalBar.querySelector('.command-text');
+                const command = `cd ./${destinationUrl.split('.')[0]}`;
+                let charIndex = 0;
+
+                function typeCommand() {
+                    if (charIndex < command.length) {
+                        commandText.textContent += command.charAt(charIndex++);
+                        setTimeout(typeCommand, 60);
+                    } else {
+                        setTimeout(() => { window.location.href = destinationUrl; }, 200);
+                    }
+                }
+                setTimeout(typeCommand, 400);
+            });
+        });
+
+
+        //初始化
+        const langToggleButton = document.getElementById('lang-toggle');
+        const themeToggleButton = document.getElementById('theme-toggle');
+        langToggleButton.addEventListener('click', () => setLanguage(currentLang === 'zh-TW' ? 'en' : 'zh-TW'));
+        themeToggleButton.addEventListener('click', () => applyTheme(document.body.classList.contains('light-mode') ? 'dark' : 'light'));
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        applyTheme(savedTheme);
+        updateUIText(currentLang);
+    });
+    </script>
+</body>
+</html>
