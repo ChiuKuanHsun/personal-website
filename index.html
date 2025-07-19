@@ -235,14 +235,12 @@
         ::-webkit-scrollbar-thumb { border-radius: 10px; background-color: var(--scrollbar-thumb-bg); border: 3px solid var(--scrollbar-track-bg); transition: background-color 0.3s; }
         ::-webkit-scrollbar-thumb:hover { background-color: var(--scrollbar-thumb-hover-bg); }
 
-        /* [關鍵修正] 使用媒體查詢來處理手機版佈局 */
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
                 padding: 15px;
                 gap: 15px;
             }
-            /* 在手機上，隱藏裝飾元素，並將終端機置中 */
             .pc-container,
             .desktop-scene {
                 display: none !important;
@@ -252,7 +250,6 @@
             }
         }
         
-        /* [關鍵修正] 針對非全螢幕的桌面瀏覽器 */
         @media (min-width: 769px) {
             body.windowed-mode .pc-container,
             body.windowed-mode .desktop-scene {
@@ -304,11 +301,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- [關鍵邏輯] 動態偵測桌面瀏覽器的視窗模式 ---
             function checkAndUpdateWindowMode() {
                 
-                // 此函數現在只針對桌面瀏覽器
-                // 手機佈局由下方的 CSS Media Query @media (max-width: 768px) 控制
                 const isMobile = window.matchMedia("(max-width: 768px)").matches;
                 if (isMobile) {
                     document.body.classList.remove('windowed-mode');
@@ -329,7 +323,6 @@
 
             // 當使用者縮放視窗時，重新執行檢查
             window.addEventListener('resize', checkAndUpdateWindowMode);
-            // --- [關鍵邏輯結束] ---
 
 
             const page = document.body;
