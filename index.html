@@ -28,7 +28,7 @@
 
             --font-family: 'Fira Code', monospace;
             --transition-speed: 0.3s;
-                        -webkit-user-select: none;
+            -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
@@ -39,12 +39,13 @@
         }
         
         html, body {
-            margin: 0; padding: 0; width: 100%; height: 100vh;
+            margin: 0; padding: 0; width: 100%;
+            min-height: 100vh;
             font-family: var(--font-family);
             background-color: var(--night-bg);
             color: var(--night-text);
             transition: background-color var(--transition-speed), color var(--transition-speed);
-            overflow: hidden;
+            overflow-x: hidden;
         }
         body.light-mode {
             background-color: var(--day-bg);
@@ -52,12 +53,14 @@
         }
 
         .navbar {
-            position: fixed; top: 0; left: 0; width: 95%;
+            position: fixed; top: 0; left: 0; 
+            width: 100%;
+            box-sizing: border-box;
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 40px;
             background-color: transparent;
             border-bottom: 1px solid transparent;
-            z-index: 100;
+            z-index: 1000;
             opacity: 0;
             transform: translateY(-100%);
             transition: opacity 0.5s, transform 0.5s, background-color var(--transition-speed), border-color var(--transition-speed);
@@ -65,11 +68,12 @@
         .navbar.visible {
             opacity: 1;
             transform: translateY(0);
-            background-color: var(--night-terminal-bg);
+            background-color: rgba(33, 33, 33, 0.8);
+            backdrop-filter: blur(10px);
             border-bottom-color: var(--night-border);
         }
         body.light-mode .navbar.visible {
-            background-color: var(--day-terminal-bg);
+            background-color: rgba(255, 255, 255, 0.8);
             border-bottom-color: var(--day-border);
         }
         .navbar .logo a { font-size: 24px; font-weight: 600; color: var(--night-accent); }
@@ -85,7 +89,8 @@
         .animation-container {
             position: relative;
             width: 100%;
-            height: 100%;
+            height: 100vh;
+            overflow: hidden;
         }
 
         .pc-container, .terminal-container {
@@ -106,8 +111,10 @@
         }
 
         .terminal-container {
-            width: 900px; max-width: 90vw;
-            height: 500px;
+            width: 90vw;
+            max-width: 900px;
+            height: 60vh;
+            max-height: 550px;
             border: 1px solid var(--night-border);
             border-radius: 8px;
             background-color: var(--night-terminal-bg);
@@ -115,6 +122,8 @@
             box-shadow: var(--projection-glow);
             transition: background-color var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
             animation: terminal-sequence 3s forwards; 
+            display: flex;
+            flex-direction: column;
         }
         body.light-mode .terminal-container {
             border-color: var(--day-border);
@@ -129,23 +138,17 @@
             opacity: 0;
             animation: fade-in 1s forwards 3s;
         }
-        a {
-            text-decoration: none;
-            transition: all var(--transition-speed);
-        }
 
-        .desktop-bg, .person-typing {
+        a { text-decoration: none; transition: all var(--transition-speed); }
+        .desktop-bg {
             position: absolute; bottom: 0; width: 100%; height: 100%;
+            background-image: url('image/desktop2.png');
             background-size: contain; background-repeat: no-repeat; background-position: bottom right;
         }
-        .desktop-bg { background-image: url('image/desktop2.png'); }
-        .person-typing { background-image: url('image/person-typing.png'); }
 
-        /*動畫關鍵影格*/
         @keyframes pc-sequence {
             0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.8); top: 50%; left: 50%; }
             28%  { opacity: 1; transform: translate(-50%, -50%) scale(1);   top: 50%; left: 50%; }
-  
             57%  { opacity: 1; transform: translate(-50%, -50%) scale(1);   top: 50%; left: 50%; } 
             100% { opacity: 1; transform: translate(-50%, -50%) scale(0.4); top: 75%; left: 80%; }
         }
@@ -154,192 +157,110 @@
             0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.1); top: 50%; left: 50%; }
             14%  { opacity: 0; transform: translate(-50%, -50%) scale(0.1); top: 50%; left: 50%; }
             37%  { opacity: 1; transform: translate(-50%, -50%) scale(1);   top: 50%; left: 50%; }
- 
             57%  { opacity: 1; transform: translate(-50%, -50%) scale(1);   top: 50%; left: 50%; } 
             100% { opacity: 1; transform: translate(-50%, -50%);             top: 53%; left: 35%; }
         }
         
-        @keyframes fade-in {
-            to { opacity: 1; }
+        @keyframes terminal-sequence-centered {
+            0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.1); top: 50%; left: 50%; }
+            14%  { opacity: 0; transform: translate(-50%, -50%) scale(0.1); top: 50%; left: 50%; }
+            37%  { opacity: 1; transform: translate(-50%, -50%) scale(1);   top: 50%; left: 50%; }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1);   top: 50%; left: 50%; }
         }
 
-        /*終端機文字*/
+        @keyframes fade-in { to { opacity: 1; } }
+
         #terminal-window { height: 100%; overflow-y: auto; opacity: 0; transition: opacity 0.5s; }
         #terminal-window.visible { opacity: 1; }
-        .terminal-line { 
-            display: block; 
-            margin-bottom: 0.7em;
-        }
+        .terminal-line { display: block; margin-bottom: 0.7em; }
         .terminal-prompt { color: var(--night-accent); }
         body.light-mode .terminal-prompt { color: var(--day-accent); }
         .cursor { display: inline-block; width: 10px; height: 1.2em; background-color: var(--night-accent); vertical-align: middle; animation: blink 1s step-end infinite; }
         body.light-mode .cursor { background-color: var(--day-accent); }
         @keyframes blink { 50% { opacity: 0; } }
 
-        /*終端機頁籤*/
         .terminal-header {
-            background-color: #2c2c2c;
-            padding: 5px 10px 0 10px;
-            border-bottom: 1px solid #444;
+            background-color: #2c2c2c; padding: 5px 10px 0 10px;
+            border-bottom: 1px solid #444; flex-shrink: 0;
         }
-        body.light-mode .terminal-header {
-            background-color: #f0f0f0;
-            border-bottom: 1px solid #ccc;
-        }
+        body.light-mode .terminal-header { background-color: #f0f0f0; border-bottom: 1px solid #ccc; }
         .terminal-tab {
-            display: inline-block;
-            background-color: var(--night-terminal-bg);
-            padding: 8px 15px;
-            border-radius: 5px 5px 0 0;
-            border: 1px solid var(--night-border);
-            border-bottom: none;
-            font-size: 14px;
-            position: relative;
-            bottom: -1px;
+            display: inline-block; background-color: var(--night-terminal-bg);
+            padding: 8px 15px; border-radius: 5px 5px 0 0;
+            border: 1px solid var(--night-border); border-bottom: none;
+            font-size: 14px; position: relative; bottom: -1px;
         }
-        body.light-mode .terminal-tab {
-            background-color: var(--day-terminal-bg);
-            border-color: var(--day-border);
-        }
+        body.light-mode .terminal-tab { background-color: var(--day-terminal-bg); border-color: var(--day-border); }
         .terminal-icon {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            vertical-align: middle;
-            margin-right: 8px;
-            background-color: transparent;
+            display: inline-block; width: 16px; height: 16px;
+            vertical-align: middle; margin-right: 8px;
             background-image: url('image/terminal_icon.png');
-
-            background-size: 35px;
-
-            background-repeat: no-repeat;
-            background-position: center;
+            background-size: 35px; background-repeat: no-repeat; background-position: center;
         }
-        body.light-mode .terminal-icon {
-            background-color: var(--day-accent);
-        }
-
-        .terminal-body {
-            padding: 15px;
-            height: calc(100% - 42px);
-            overflow-y: auto;
-        }
-        #terminal-window {
-            height: auto;
-        }
-        .startup-message {
-            color: #999;
-            font-size: 0.9em;
-            margin-bottom: 1.5em;
-            white-space: pre-wrap;
-        }
-        /*粒子效果樣式*/
+        body.light-mode .terminal-icon { background-color: var(--day-accent); }
+        .terminal-body { padding: 15px; overflow-y: auto; flex-grow: 1; }
+        #terminal-window { height: auto; }
+        .startup-message { color: #999; font-size: 0.9em; margin-bottom: 1.5em; white-space: pre-wrap; }
+        
         .particle {
-            position: absolute;
-            pointer-events: none;
-            color: var(--night-accent);
-            font-size: 20px;
-            font-weight: 600;
-            opacity: 1;
-            animation: particle-anim 1s forwards;
-            z-index: 9999;
+            position: fixed; pointer-events: none;
+            color: var(--night-accent); font-size: 20px; font-weight: 600;
+            opacity: 1; animation: particle-anim 1s forwards; z-index: 9999;
         }
-        body.light-mode .particle {
-            color: var(--day-accent);
-        }
-        @keyframes particle-anim {
-            to {
-                transform: translateY(-100px) scale(0.5);
-                opacity: 0;
-            }
-        }
+        body.light-mode .particle { color: var(--day-accent); }
+        @keyframes particle-anim { to { transform: translateY(-100px) scale(0.5); opacity: 0; } }
+        
         .page-transition-terminal {
-            position: fixed;
-            top: 70px;
-            right: 40px;
-
-
-            background-color: #1a1a1a;
-            border: 1px solid var(--night-border);
-            padding: 10px 20px;
-            font-size: 18px;
-            z-index: 9999;
-            border-radius: 6px;
-
+            position: fixed; top: 70px; right: 40px;
+            background-color: #1a1a1a; border: 1px solid var(--night-border);
+            padding: 10px 20px; font-size: 18px; z-index: 9999; border-radius: 6px;
             animation: command-appear-down 0.5s forwards ease-out;
         }
-
-        body.light-mode .page-transition-terminal {
-            background-color: #e9e9e9;
-            border-top-color: var(--day-border);
-        }
-
-        .page-transition-terminal .prompt {
-            color: var(--night-accent);
-            margin-right: 10px;
-        }
-
-        body.light-mode .page-transition-terminal .prompt {
-            color: var(--day-accent);
-        }
-
+        body.light-mode .page-transition-terminal { background-color: #e9e9e9; border-top-color: var(--day-border); }
+        .page-transition-terminal .prompt { color: var(--night-accent); margin-right: 10px; }
+        body.light-mode .page-transition-terminal .prompt { color: var(--day-accent); }
         .page-transition-terminal .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 1.1em;
-            background-color: var(--night-accent);
-            vertical-align: middle;
+            display: inline-block; width: 10px; height: 1.1em;
+            background-color: var(--night-accent); vertical-align: middle;
             animation: typing-cursor-blink 1s step-end infinite;
         }
+        body.light-mode .page-transition-terminal .cursor { background-color: var(--day-accent); }
+        @keyframes command-appear-down { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes typing-cursor-blink { 50% { opacity: 0; } }
+        
+        :root { --scrollbar-track-bg: #2c2c2c; --scrollbar-thumb-bg: var(--night-accent); --scrollbar-thumb-hover-bg: #8cff7a; }
+        body.light-mode { --scrollbar-track-bg: #e9e9e9; --scrollbar-thumb-bg: var(--day-accent); --scrollbar-thumb-hover-bg: #3cb314; }
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background-color: var(--scrollbar-track-bg); transition: background-color 0.3s; }
+        ::-webkit-scrollbar-thumb { border-radius: 10px; background-color: var(--scrollbar-thumb-bg); border: 3px solid var(--scrollbar-track-bg); transition: background-color 0.3s; }
+        ::-webkit-scrollbar-thumb:hover { background-color: var(--scrollbar-thumb-hover-bg); }
 
-        body.light-mode .page-transition-terminal .cursor {
-            background-color: var(--day-accent);
-        }
-
-        @keyframes command-appear-down {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
+        /* [關鍵修正] 使用媒體查詢來處理手機版佈局 */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 15px;
+                gap: 15px;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            /* 在手機上，隱藏裝飾元素，並將終端機置中 */
+            .pc-container,
+            .desktop-scene {
+                display: none !important;
+            }
+            .terminal-container {
+                animation-name: terminal-sequence-centered !important;
             }
         }
-
-        @keyframes typing-cursor-blink {
-            50% { opacity: 0; }
-        }
-        /*滑動條顏色*/
-        :root {
-        --scrollbar-track-bg: #2c2c2c; /*軌道顏色*/
-        --scrollbar-thumb-bg: var(--night-accent); /*滑塊顏色*/
-        --scrollbar-thumb-hover-bg: #8cff7a; /*滑塊懸停顏色*/
-        }
-        body.light-mode {
-        --scrollbar-track-bg: #e9e9e9;
-        --scrollbar-thumb-bg: var(--day-accent);
-        --scrollbar-thumb-hover-bg: #3cb314;
-        }
-
-        ::-webkit-scrollbar {
-        width: 12px;
-        }
-
-        ::-webkit-scrollbar-track {
-        background-color: var(--scrollbar-track-bg);
-        transition: background-color 0.3s;
-        }
-
-        ::-webkit-scrollbar-thumb {
-        border-radius: 10px;
-        background-color: var(--scrollbar-thumb-bg);
-        border: 3px solid var(--scrollbar-track-bg); 
-        transition: background-color 0.3s;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-        background-color: var(--scrollbar-thumb-hover-bg);
+        
+        /* [關鍵修正] 針對非全螢幕的桌面瀏覽器 */
+        @media (min-width: 769px) {
+            body.windowed-mode .pc-container,
+            body.windowed-mode .desktop-scene {
+                display: none !important;
+            }
+            body.windowed-mode .terminal-container {
+                animation-name: terminal-sequence-centered !important;
+            }
         }
 
     </style>
@@ -362,7 +283,7 @@
         </div>
     </header>
 
-    <div class="animation-container">
+    <div class="animation-container" id="animation-container">
         <div class="desktop-scene" id="desktop-scene">
             <div class="desktop-bg" style="right: 180px; top: 40px;"></div>
         </div>
@@ -375,16 +296,43 @@
                 </div>
             </div>
             <div class="terminal-body" style="transform: translate3d(0, 0, 0);">
-                <div id="terminal-window">
-                    </div>
+                <div id="terminal-window"></div>
             </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            //粒子效果
-            const page = document.getElementById('home-page');
+            
+            // --- [關鍵邏輯] 動態偵測桌面瀏覽器的視窗模式 ---
+            function checkAndUpdateWindowMode() {
+                
+                // 此函數現在只針對桌面瀏覽器
+                // 手機佈局由下方的 CSS Media Query @media (max-width: 768px) 控制
+                const isMobile = window.matchMedia("(max-width: 768px)").matches;
+                if (isMobile) {
+                    document.body.classList.remove('windowed-mode');
+                    return;
+                }
+
+                const isFullScreen = window.innerWidth >= screen.width - 20;
+
+                if (isFullScreen) {
+                    document.body.classList.remove('windowed-mode');
+                } else {
+                    document.body.classList.add('windowed-mode');
+                }
+            }
+
+            // 頁面載入時，先執行一次檢查
+            checkAndUpdateWindowMode();
+
+            // 當使用者縮放視窗時，重新執行檢查
+            window.addEventListener('resize', checkAndUpdateWindowMode);
+            // --- [關鍵邏輯結束] ---
+
+
+            const page = document.body;
             function createParticle(x, y) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
@@ -425,18 +373,20 @@
             const terminalWindow = document.getElementById('terminal-window');
             const navbar = document.getElementById('navbar');
             
-            //動畫流程控制
             function startAnimationFlow() {
                 terminal.addEventListener('animationend', (event) => {
-                    if (event.animationName === 'terminal-sequence') {
+                    if (event.animationName === 'terminal-sequence' || event.animationName === 'terminal-sequence-centered') {
                         navbar.classList.add('visible');
                         terminalWindow.classList.add('visible');
+                        
+                        document.querySelector('.animation-container').style.overflow = 'visible';
+                        document.body.style.overflowY = 'auto';
+
                         runTypingAnimation();
                     }
                 });
             }
 
-            //打字動畫與語言切換
             let currentLang = localStorage.getItem('lang') || 'zh-TW';
             let typingTimeout;
 
@@ -462,6 +412,11 @@
                     let lineIndex = 0;
                     function typeLine() {
                         if (lineIndex >= lines.length) {
+                            const finalPrompt = document.createElement('div');
+                            finalPrompt.className = 'terminal-line';
+                            finalPrompt.innerHTML = `<span class="terminal-prompt">user@home:~$ </span><span class="cursor"></span>`;
+                            terminalWindow.appendChild(finalPrompt);
+                            terminalWindow.parentElement.scrollTop = terminalWindow.parentElement.scrollHeight;
                             typingTimeout = setTimeout(() => {
                                 runTypingAnimation();
                             }, 3000);
@@ -530,48 +485,37 @@
             
             startAnimationFlow();
         });
-        //頁面切換打字動畫
+        
         document.querySelectorAll('.navbar .menu-links a').forEach(link => {
             link.addEventListener('click', function(event) {
                 event.preventDefault();
                 const destinationUrl = this.getAttribute('href');
                 if (!destinationUrl || destinationUrl === '#' || destinationUrl === window.location.pathname) return;
-
                 if (document.querySelector('.page-transition-terminal')) return;
-
                 const terminalBar = document.createElement('div');
                 terminalBar.className = 'page-transition-terminal';
-                
                 const promptSpan = document.createElement('span');
                 promptSpan.className = 'prompt';
                 promptSpan.textContent = '>';
-
                 const commandSpan = document.createElement('span');
                 const cursorSpan = document.createElement('span');
                 cursorSpan.className = 'cursor';
-
                 terminalBar.appendChild(promptSpan);
                 terminalBar.appendChild(commandSpan);
                 terminalBar.appendChild(cursorSpan);
                 document.body.appendChild(terminalBar);
-
                 const command = `cd ./${destinationUrl.split('.')[0]}`;
                 let charIndex = 0;
-
                 function typeCommand() {
                     if (charIndex < command.length) {
                         commandSpan.textContent += command.charAt(charIndex);
                         charIndex++;
-                        setTimeout(typeCommand, 60); // 打字速度
+                        setTimeout(typeCommand, 60);
                     } else {
-                        // 打字完成後，等待一下再跳轉
-                        setTimeout(() => {
-                            window.location.href = destinationUrl;
-                        }, 50); // 跳轉延遲
+                        setTimeout(() => { window.location.href = destinationUrl; }, 50);
                     }
                 }
-
-                setTimeout(typeCommand, 400); // 等待滑入動畫完成
+                setTimeout(typeCommand, 400);
             });
         });
     </script>
